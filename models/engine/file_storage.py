@@ -93,8 +93,10 @@ class FileStorage:
         if cls is not None:
             for k, v in classes.items():
                 if v == cls:
-                    key = "{}.{}".format(k, id)
-                    count += 1
+                    key = k
+            for k in self.__objects.keys():
+                if key == k.split('.')[0]:
+                    count += 1 
         elif cls is None:
-            count = len(self.__objects.values())
+            count = len(self.__objects.keys())
         return count
