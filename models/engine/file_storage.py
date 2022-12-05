@@ -80,6 +80,8 @@ class FileStorage:
                 if v == cls:
                     key = "{}.{}".format(k, id)
             obj = {}
+            if key not in self.__objects.keys():
+                return None
             for k in self.__objects.keys():
                 if key == k:
                     obj = self.__objects[k]
