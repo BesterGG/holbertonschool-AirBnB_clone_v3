@@ -3,7 +3,7 @@
     Comment
 """
 from os import getenv
-from api.v1.views import app_views
+from api.v1.views.__init__ import app_views
 from flask import Flask, render_template
 from jinja2 import TemplateNotFound
 from models import storage
