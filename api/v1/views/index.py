@@ -10,4 +10,4 @@ def status():
     """
         Returns API status
     """
-    return jsonify({"status": "OK"})
+    return jsonify(status= "OK")
