@@ -2,7 +2,7 @@
 """
     Comment
 """
-from sys import getenv
+from os import getenv
 from api.v1.views import app_views
 from flask import Flask, render_template
 from jinja2 import TemplateNotFound
