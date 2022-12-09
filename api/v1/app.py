@@ -4,13 +4,17 @@
 """
 from os import getenv
 from api.v1.views.__init__ import app_views
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from jinja2 import TemplateNotFound
 from models import storage
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
 
+@app.errorhandler(404)
+def not_found(exception):
+    """ Handles 404 """
+    return jsonify(error="Not found")
 
 @app.teardown_appcontext
 def destroy(exception):
