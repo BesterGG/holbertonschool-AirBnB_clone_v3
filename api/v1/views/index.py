@@ -19,4 +19,13 @@ def api_stats():
     """
         Returns API stats for analytics
     """
-    return jsonify(storage.count())
+    return jsonify(
+        {
+            "amenities": storage.count("Amenity"),
+            "cities": storage.count("City"),
+            "places": storage.count("Place"),
+            "reviews": storage.count("Review"),
+            "states": storage.count("State"),
+            "users": storage.count("User")
+        }
+    )
