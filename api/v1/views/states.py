@@ -42,7 +42,7 @@ def states_scoped(state_id):
             if state.get('id') == state_id:
                 return jsonify(state)
     if met == 'PUT':
-        status = 400 if not req or 'name' not in req else 200
+        status = 404 if not req or 'name' not in req else 200
         if not req:
             abort(status, 'Not a JSON')
         if 'name' not in req:
@@ -52,3 +52,7 @@ def states_scoped(state_id):
                 setattr(storage.get(State, state_id), key, value)
         storage.save()
         return jsonify(storage.get(State, state_id)), status
+    if met == 'DELETE':
+        storage.delete(storage.get(State, state_id))
+        storage.save()
+        return {}, 200
