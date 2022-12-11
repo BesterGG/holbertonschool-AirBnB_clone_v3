@@ -57,10 +57,10 @@ def cities_scoped(city_id):
             abort(status, 'Missing name')
         for key, value in req.items():
             if key not in ['id', 'created_at', 'updated_at']:
-                setattr(storage.get(City, city_id), key, value)
+                setattr(obj_city, key, value)
         storage.save()
-        return jsonify(storage.get(City, city_id)), status
+        return jsonify(obj_city), status
     if met == 'DELETE':
-        storage.delete(storage.get(City, city_id))
+        storage.delete(obj_city)
         storage.save()
         return {}, 200
