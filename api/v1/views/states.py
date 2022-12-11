@@ -28,7 +28,7 @@ def states_gen():
         return jsonify(obj_list)
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET', 'PUT', 'DELETE'])
+@app_views.route('/states/<state_id>', methods=['GET', 'PUT', 'DELETE'])
 def states_scoped(state_id):
     """
         Method to retrieve/modify/delete a specific state object
