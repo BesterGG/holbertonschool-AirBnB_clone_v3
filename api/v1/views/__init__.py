@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-    Comment
+    Views init file for imports and Blueprint
 """
 from flask import Blueprint
 

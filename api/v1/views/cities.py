@@ -17,7 +17,7 @@ def cities_gen(state_id):
     req = request.get_json()
     obj_list = [state.to_dict() for state in storage.all("State").values()]
     if state_id not in [state.get('id') for state in obj_list]:
-        abort(404)
+        abort(400)
     if met == 'POST':
         status = 400 if not req or 'name' not in req else 201
         if not req:
@@ -45,12 +45,10 @@ def cities_scoped(city_id):
         abort(404)
     met = request.method
     req = request.get_json()
-    if obj_city is None:
-        abort(404)
     if met == 'GET':
         return jsonify(obj_city.to_dict())
     if met == 'PUT':
-        status = 404 if not req or 'name' not in req else 200
+        status = 400 if not req or 'name' not in req else 200
         if not req:
             abort(status, 'Not a JSON')
         if 'name' not in req:
