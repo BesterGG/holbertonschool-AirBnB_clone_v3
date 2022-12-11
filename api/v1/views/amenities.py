@@ -41,7 +41,7 @@ def amenities_scoped(amenity_id):
     if met == 'GET':
         return jsonify(am.to_dict())
     if met == 'PUT':
-        status = 404 if not req or 'name' not in req else 200
+        status = 400 if not req or 'name' not in req else 200
         if not req:
             abort(status, 'Not a JSON')
         if 'name' not in req:
