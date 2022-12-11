@@ -27,6 +27,7 @@ def states_gen():
         obj_list = [state.to_dict() for state in storage.all("State").values()]
         return jsonify(obj_list)
 
+
 @app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET', 'PUT', 'DELETE'])
 def states_scoped(state_id):
     """
@@ -34,7 +35,7 @@ def states_scoped(state_id):
     """
     met = request.method
     req = request.get_json()
-    obj_list =  [state.to_dict() for state in storage.all("State").values()]
+    obj_list = [state.to_dict() for state in storage.all("State").values()]
     if state_id not in [state.get('id') for state in obj_list]:
         abort(404)
     if met == 'GET':
