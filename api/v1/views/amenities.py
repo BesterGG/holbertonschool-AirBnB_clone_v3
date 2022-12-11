@@ -28,7 +28,7 @@ def amenities_gen():
         return jsonify(obj_list)
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['GET', 'PUT', 'DELETE'])
+@app_views.route('/amenities/<amenity_id>', methods=["GET", "DELETE", "PUT"])
 def amenities_scoped(amenity_id):
     """
         Method to retrieve/modify/delete a specific state object
