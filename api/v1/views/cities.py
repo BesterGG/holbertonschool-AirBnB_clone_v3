@@ -19,11 +19,6 @@ def cities_gen(state_id):
     ids = [obj['id'] for obj in state_list]
     if state_id not in ids:
         abort(404)
-    if met == "GET":
-        cities = storage.all("City")
-        state_cities = [obj.to_dict() for obj in cities.values()
-                        if obj.state_id == state_id]
-        return jsonify(state_cities)
     if met == "POST":
         if not req:
             abort(400, 'Not a JSON')
@@ -33,6 +28,11 @@ def cities_gen(state_id):
         new_city = City(**req)
         new_city.save()
         return jsonify(new_city.to_dict()), 201
+    if met == "GET":
+        cities = storage.all("City")
+        state_cities = [obj.to_dict() for obj in cities.values()
+                        if obj.state_id == state_id]
+        return jsonify(state_cities)
 
 
 @app_views.route('/cities/<city_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -47,19 +47,17 @@ def cities_scoped(city_id):
         abort(404)
     if met == "GET":
         return jsonify(obj_city.to_dict())
+    if met == "PUT":
+        if not req:
+            abort(400, 'Not a JSON')
+        if 'name' not in req:
+            abort(400, 'Missing name')
+        for key, value in req.items():
+            if key not in ['id', 'created_at', 'updated_at', 'state_id']:
+                setattr(obj_city, key, value)
+        storage.save()
+        return jsonify(obj_city.to_dict()), 200
     if met == "DELETE":
         storage.delete(obj_city)
         storage.save()
         return {}, 200
-    elif met == "PUT":
-        if not request.get_json():
-            abort(400, 'Not a JSON')
-        elif 'name' not in req:
-            abort(400, 'Missing name')
-        else:
-            for key, value in req.items():
-                if key not in ['id', 'created_at',
-                                'updated_at', 'state_id']:
-                    setattr(obj_city, key, value)
-            storage.save()
-            return jsonify(obj_city.to_dict()), 200
