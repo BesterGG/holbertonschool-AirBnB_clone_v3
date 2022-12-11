@@ -8,8 +8,8 @@ from models.amenity import Amenity
 from flask import jsonify, abort, request
 
 
-@app_views.route('/amenities', methods=['GET', 'POST'])
-def states_gen():
+@app_views.route('/amenities', methods=["GET", "POST"])
+def amenities_gen():
     """
         Method to retrieve or generate generic amenities object
     """
@@ -29,7 +29,7 @@ def states_gen():
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['GET', 'PUT', 'DELETE'])
-def states_scoped(amenity_id):
+def amenities_scoped(amenity_id):
     """
         Method to retrieve/modify/delete a specific state object
     """
