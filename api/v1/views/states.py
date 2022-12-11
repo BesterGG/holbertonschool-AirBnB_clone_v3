@@ -3,52 +3,52 @@
     Comment
 """
 from api.v1.views.__init__ import app_views
-from models.__init__ import storage
+from models import storage
+from models.state import State
 from flask import jsonify, abort, request
 
 
-@app_views.route('/states', methods=['GET'])
-def states():
-    """returns"""
-    st = storage.all('State')
-    list = []
-    for k, v in st.items():
-        list.append(v.to_dict())
-    return jsonify(list)
+@app_views.route('/states', strict_slashes=False, methods=['GET', 'POST'])
+def states_gen():
+    """
+        Method to retrieve or generate generic states object
+    """
+    req = request.get_json()
+    if request.method == 'POST':
+        status = 400 if not req or 'name' not in req else 201
+        if not req:
+            abort(status, 'Not a JSON')
+        if 'name' not in req:
+            abort(status, 'Missing name')
+        obj = State(req)
+        obj.save()
+        return jsonify(obj.to_dict()), status
+    if request.method == 'GET':
+        obj_list = [state.to_dict() for state in storage.all("State").values()]
+        return jsonify(obj_list)
 
-@app_views.route('/states/<state_id>', methods=['GET'])
-def state_id(state_id):
-    """Get the state"""
-    from models.state import State
-    st = storage.get(State, state_id)
-    if st is None:
+@app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET', 'PUT', 'DELETE'])
+def states_scoped(state_id):
+    """
+        Method to retrieve/modify/delete a specific state object
+    """
+    met = request.method
+    req = request.get_json()
+    obj_list =  [state.to_dict() for state in storage.all("State").values()]
+    if state_id not in [state.get('id') for state in obj_list]:
         abort(404)
-    else:
-        return jsonify(st.to_dict())
-
-@app_views.route('/states/<state_id>', methods=['DELETE'])
-def state_delete(state_id):
-    """Delete"""
-    from models.state import State
-    st = storage.get(State, state_id)
-    if st is None:
-        abort(404)
-    else:
-        storage.delete(State)
+    if met == 'GET':
+        for state in obj_list:
+            if state.get('id') == state_id:
+                return jsonify(state)
+    if met == 'PUT':
+        status = 400 if not req or 'name' not in req else 200
+        if not req:
+            abort(status, 'Not a JSON')
+        if 'name' not in req:
+            abort(status, 'Missing name')
+        for key, value in req.items():
+            if key not in ['id', 'created_at', 'updated_at']:
+                setattr(storage.get(State, state_id), key, value)
         storage.save()
-        return jsonify({}), 200
-
-@app_views.route('/states', methods=['POST'])
-def post_state():
-    """Comment"""
-    import json
-    from models.state import State
-    dic_t = request.get_json()
-    if dic_t is None or type(dic_t) != dict:   
-        abort(400, description='Not a JSON')
-    elif 'name' not in dic_t.keys():
-        abort(400, description='Missing name')
-    else:
-        newstate = State(**dic_t)
-        newstate.save()
-        return jsonify(newstate.to_dict()), 201
+        return jsonify(storage.get(State, state_id)), status

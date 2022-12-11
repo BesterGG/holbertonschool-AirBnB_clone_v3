@@ -4,8 +4,7 @@
 """
 from os import getenv
 from api.v1.views.__init__ import app_views
-from flask import Flask, render_template, jsonify
-from jinja2 import TemplateNotFound
+from flask import Flask, jsonify
 from models import storage
 
 app = Flask(__name__)
