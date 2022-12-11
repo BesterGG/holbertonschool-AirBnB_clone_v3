@@ -8,50 +8,45 @@ from models.amenity import Amenity
 from flask import jsonify, abort, request
 
 
-@app_views.route('/amenities', methods=['GET', 'POST'])
-def states_gen():
-    """
-        Method to retrieve or generate generic amenities object
-    """
-    req = request.get_json()
-    if request.method == 'POST':
-        status = 400 if not req or 'name' not in req else 201
-        if not req:
-            abort(status, 'Not a JSON')
-        if 'name' not in req:
-            abort(status, 'Missing name')
-        obj = Amenity(**req)
-        obj.save()
-        return jsonify(obj.to_dict()), status
-    if request.method == 'GET':
-        obj_list = [am.to_dict() for am in storage.all("Amenity").values()]
-        return jsonify(obj_list)
+@app_views.route('/amenities', methods=["GET", "POST"])
+def amenities():
+    ''' Retrieves all amenities '''
+    if request.method == "GET":
+        amenities_list = [obj.to_dict() for obj
+                          in storage.all("Amenity").values()]
+        return jsonify(amenities_list)
+    elif request.method == "POST":
+        req_json = request.get_json()
+        if not req_json:
+            abort(400, 'Not a JSON')
+        if 'name' not in req_json:
+            abort(400, 'Missing name')
+        new_amenity = Amenity(**req_json)
+        new_amenity.save()
+        return jsonify(new_amenity.to_dict()), 201
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['GET', 'PUT', 'DELETE'])
-def states_scoped(amenity_id):
-    """
-        Method to retrieve/modify/delete a specific state object
-    """
-    met = request.method
-    req = request.get_json()
-    am = amenity = storage.get(Amenity, amenity_id)
-    if am is None:
+@app_views.route('/amenities/<amenity_id>', methods=["GET", "DELETE", "PUT"])
+def amenity(amenity_id):
+    ''' Retrieves, modifies or deletes an amenity '''
+    amenity = storage.get(Amenity, amenity_id)
+    if amenity is None:
         abort(404)
-    if met == 'GET':
-        return jsonify(am.to_dict())
-    if met == 'PUT':
-        status = 404 if not req or 'name' not in req else 200
-        if not req:
-            abort(status, 'Not a JSON')
-        if 'name' not in req:
-            abort(status, 'Missing name')
-        for key, value in req.items():
-            if key not in ['id', 'created_at', 'updated_at']:
-                setattr(storage.get(Amenity, amenity_id), key, value)
-        storage.save()
-        return jsonify(storage.get(Amenity, amenity_id)), status
-    if met == 'DELETE':
-        storage.delete(storage.get(Amenity, amenity_id))
-        storage.save()
-        return {}, 200
+    else:
+        if request.method == "GET":
+            return jsonify(amenity.to_dict())
+        if request.method == "DELETE":
+            storage.delete(amenity)
+            storage.save()
+            return {}, 200
+        elif request.method == "PUT":
+            if not request.get_json():
+                abort(400, 'Not a JSON')
+            else:
+                amenity = storage.get(Amenity, amenity_id)
+                for key, value in request.get_json().items():
+                    if key not in ['id', 'created_at',
+                                   'updated_at']:
+                        setattr(amenity, key, value)
+                storage.save()
+                return jsonify(amenity.to_dict()), 200
