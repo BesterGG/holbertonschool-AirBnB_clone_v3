@@ -17,7 +17,7 @@ def cities_gen(state_id):
     req = request.get_json()
     obj_list = [state.to_dict() for state in storage.all("State").values()]
     if state_id not in [state.get('id') for state in obj_list]:
-        abort(400)
+        abort(404)
     if met == 'POST':
         status = 400 if not req or 'name' not in req else 201
         if not req:
