@@ -120,9 +120,9 @@ class TestFileStorage(unittest.TestCase):
         new_dict[dummy.__class__.__name__ + "." + dummy.id] = dummy
         FileStorage._FileStorage__objects = new_dict
         '''self.assertTrue(storage.get('Place', dummy.id) is not None)
-        self.assertTrue(storage.get(None, None) is None)'''
+        self.assertTrue(storage.get(None, None) is None)
         self.assertTrue(storage.get('User', None) is None)
-        self.assertTrue(storage.get(None, dummy.id) is None)
+        self.assertTrue(storage.get(None, dummy.id) is None)'''
 
     def test_count_func(self):
         ''' Test for count method '''
