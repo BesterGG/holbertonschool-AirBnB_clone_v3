@@ -69,9 +69,9 @@ test_db_storage.py'])
 
     def test_get_func(self):
         ''' Test for get method'''
-        '''self.assertTrue(models.storage.get('Base Model', '123') is None)
+        '''self.assertTrue(models.storage.get('Base Model', '123') is None)'''
         self.assertTrue(models.storage.get(None, None) is None)
-        self.assertTrue(models.storage.get('User', None) is None)
+        '''self.assertTrue(models.storage.get('User', None) is None)
         self.assertTrue(models.storage.get(None, '38746182374') is None)'''
 
     def test_count_func(self):
