@@ -18,6 +18,10 @@ def users_gen():
             abort(status, 'Not a JSON')
         if 'name' not in req:
             abort(status, 'Missing name')
+        if 'email' not in req:
+            abort(400, 'Missing email')
+        if 'password' not in req:
+            abort(400, 'Missing password')
         obj = User(**req)
         obj.save()
         return jsonify(obj.to_dict()), status
