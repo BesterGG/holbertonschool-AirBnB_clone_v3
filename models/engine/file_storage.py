@@ -79,13 +79,13 @@ class FileStorage:
             for k, v in classes.items():
                 if v == cls:
                     key = "{}.{}".format(k, id)
-            obj = {}
-            if key not in self.__objects.keys():
-                return None
-            for k in self.__objects.keys():
-                if key == k:
-                    obj = self.__objects[k]
-            return obj
+                obj = {}
+                if key not in self.__objects.keys():
+                    return None
+                for k in self.__objects.keys():
+                    if key == k:
+                        obj = self.__objects[k]
+                return obj
 
     def count(self, cls=None):
         """
