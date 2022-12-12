@@ -9,57 +9,60 @@ from models.user import User
 from flask import jsonify, abort, request
 
 
-@app_views.route('/cities/<city_id>/places', methods=["GET", "POST"])
-def places_from_city(city_id):
-    ''' Retrieves all cities from a state '''
-    cities_list = [obj.to_dict() for obj in storage.all("City").values()]
-    ids = [obj['id'] for obj in cities_list]
-    if city_id in ids:
-        if request.method == "GET":
-            cities = storage.all("Place")
-            city_places = [obj.to_dict() for obj in cities.values()
-                           if obj.city_id == city_id]
-            return jsonify(city_places)
-        elif request.method == "POST":
-            req_json = request.get_json()
-            if not req_json:
-                abort(400, 'Not a JSON')
-            if not req_json.get("user_id"):
-                abort(400, "Missing user_id")
-            user = storage.get(User, req_json.get("user_id"))
-            if not user:
-                abort(404, "Not found")
-            if 'name' not in req_json:
-                abort(400, 'Missing name')
-            req_json["city_id"] = city_id
-            new_place = Place(**req_json)
-            new_place.save()
-            return jsonify(new_place.to_dict()), 201
-    else:
+@app_views.route('/cities/<city_id>/places', methods=['GET', 'POST'])
+def cities_gen(city_id):
+    """
+        Method to retrieve or generate generic place object
+    """
+    met = request.method
+    req = request.get_json()
+    obj_cities = [obj.to_dict() for obj in storage.all("City").values()]
+    if city_id not in [cit['id'] for cit in obj_cities]:
         abort(404)
+    if met == "GET":
+        obj_places = storage.all("Place")
+        obj_city_places = [obj.to_dict() for obj in obj_places.values()
+                           if obj.city_id == city_id]
+        return jsonify(obj_city_places)
+    if met == "POST":
+        if not req:
+            abort(400, 'Not a JSON')
+        if not req.get("user_id"):
+            abort(400, "Missing user_id")
+        user = storage.get(User, req.get("user_id"))
+        if not user:
+            abort(404, "Not found")
+        if 'name' not in req:
+            abort(400, 'Missing name')
+        req["city_id"] = city_id
+        new_place = Place(**req)
+        new_place.save()
+        return jsonify(new_place.to_dict()), 201
 
 
 @app_views.route('/places/<place_id>', methods=["GET", "DELETE", "PUT"])
-def place(place_id):
-    ''' Retrieves, modifies, or deletes a particular place '''
-    place = storage.get(Place, place_id)
-    if place is None:
+def amenities_scoped(place_id):
+    """
+        Method to retrieve/modify/delete a specific place object
+    """
+    met = request.method
+    req = request.get_json()
+    obj_place = storage.get(Place, place_id)
+    if obj_place is None:
         abort(404)
     else:
-        if request.method == "GET":
-            return jsonify(place.to_dict())
-        if request.method == "DELETE":
-            storage.delete(place)
+        if met == "GET":
+            return jsonify(obj_place.to_dict())
+        if met == "DELETE":
+            storage.delete(obj_place)
             storage.save()
             return {}, 200
-        elif request.method == "PUT":
-            if not request.get_json():
+        elif met == "PUT":
+            if not req:
                 abort(400, 'Not a JSON')
-            else:
-                place = storage.get(Place, place_id)
-                for key, value in request.get_json().items():
-                    if key not in ['id', 'created_at',
-                                   'updated_at', 'city_id', 'user_id']:
-                        setattr(place, key, value)
-                storage.save()
-                return jsonify(place.to_dict()), 200
+            for key, value in req.items():
+                if key not in ['id', 'created_at',
+                                'updated_at', 'city_id', 'user_id']:
+                    setattr(obj_place, key, value)
+            storage.save()
+            return jsonify(obj_place.to_dict()), 200
