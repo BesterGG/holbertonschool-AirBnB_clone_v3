@@ -73,7 +73,7 @@ class FileStorage:
         """
         Returns the obj based on the cls and its ID
         """
-        key = "{}.{}".format(cls, id)
+        key = "{}.{}".format(cls.__name__, id)
         if key in self.__objects:
             return self.__objects[key]
         return None
