@@ -28,7 +28,6 @@ def users_gen():
         return jsonify(new_user.to_dict()), 201
 
 
-
 @app_views.route('/users/<user_id>', methods=['GET', 'DELETE', 'PUT'])
 def users_scoped(user_id):
     """
