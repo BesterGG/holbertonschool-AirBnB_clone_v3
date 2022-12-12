@@ -29,11 +29,11 @@ def places_gen(city_id):
             abort(400, 'Not a JSON')
         if not req.get("user_id"):
             abort(400, "Missing user_id")
+        if 'name' not in req:
+            abort(400, 'Missing name')
         user = storage.get(User, req.get("user_id"))
         if not user:
             abort(404, "Not found")
-        if 'name' not in req:
-            abort(400, 'Missing name')
         req["city_id"] = city_id
         new_place = Place(**req)
         new_place.save()
@@ -62,7 +62,7 @@ def places_scoped(place_id):
                 abort(400, 'Not a JSON')
             for key, value in req.items():
                 if key not in ['id', 'created_at',
-                                'updated_at', 'city_id', 'user_id']:
+                               'updated_at', 'city_id', 'user_id']:
                     setattr(obj_place, key, value)
             storage.save()
             return jsonify(obj_place.to_dict()), 200
