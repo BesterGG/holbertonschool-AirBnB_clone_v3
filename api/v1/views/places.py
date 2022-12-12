@@ -10,7 +10,7 @@ from flask import jsonify, abort, request
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET', 'POST'])
-def cities_gen(city_id):
+def places_gen(city_id):
     """
         Method to retrieve or generate generic place object
     """
@@ -41,7 +41,7 @@ def cities_gen(city_id):
 
 
 @app_views.route('/places/<place_id>', methods=["GET", "DELETE", "PUT"])
-def amenities_scoped(place_id):
+def places_scoped(place_id):
     """
         Method to retrieve/modify/delete a specific place object
     """
