@@ -13,18 +13,15 @@ def users_gen():
     ''' Retrieves all users or adds a new one '''
     req = request.get_json()
     if request.method == 'POST':
-        status = 400 if not req or 'name' not in req else 201
         if not req:
-            abort(status, 'Not a JSON')
-        if 'name' not in req:
-            abort(status, 'Missing name')
+            abort(400, 'Not a JSON')
         if 'email' not in req:
             abort(400, 'Missing email')
         if 'password' not in req:
             abort(400, 'Missing password')
         obj = User(**req)
         obj.save()
-        return jsonify(obj.to_dict()), status
+        return jsonify(obj.to_dict()), 201
     if request.method == 'GET':
         obj_list = [user.to_dict() for user in storage.all("User").values()]
         return jsonify(obj_list)
