@@ -79,11 +79,9 @@ class DBStorage:
         """
         Returns the obj based on the cls and its ID
         """
-        if cls not in classes.values() or id is None:
-            return None
-        elif cls in classes.values():
-            qry = self.__session.query(cls).filter(cls.id == id).first()
-            return qry
+        if cls and id:
+            return self.__session.query(cls).filter_by(id=id).first()
+        return None
 
     def count(self, cls=None):
         """
